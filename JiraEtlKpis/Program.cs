@@ -1,4 +1,6 @@
-﻿internal class Program
+﻿using System.Buffers;
+
+internal class Program
 {
     private static void Main(string[] args)
     {
@@ -8,7 +10,7 @@
         }
         catch (System.ArgumentException ae)
         {
-            Console.WriteLine($"\nERROR: {ae.Message}\n");
+            Console.WriteLine($"\nERROR: {ae.Message}");
             ShowHelp();
         }
     }
@@ -16,17 +18,22 @@
     private static void ShowHelp()
     {
         Console.WriteLine("\nUsage: JiraEtlKpis.exe <options>\n");
-        Console.WriteLine("Arguments:");
+        Console.WriteLine("Options:");
         Console.WriteLine("\t-JiraUrl, -j: The URL of the Jira instance.");
         Console.WriteLine("\t-JiraUserName, -u: The username for authenticating with Jira.");
-        Console.WriteLine("\t-JiraToken, -k: The API token or password for authenticating with Jira.");
+        Console.WriteLine("\t-JiraToken, -t: The API token or password for authenticating with Jira.");
         Console.WriteLine("\t-SqlServerConnectionString, -s: The connection string for the SQL Server database.");
-        Console.WriteLine("\t-DateForIncrementalUpdate, -d: The date for performing incremental updates in the ETL process.");
+        Console.WriteLine("\t-DateTime, -d: The date AND THE TIME for performing incremental updates in the ETL process.");
+        Console.WriteLine($"\t\tFormat: {DateTime.Now}");
+        Console.WriteLine("\nExample:");
+        Console.WriteLine($"\tJiraEtlKpis.exe -j https://my.atlassian.com -u usr -k tnk -s Server=myServerAddress;Database=myDataBase;Trusted_Connection=True -d \"{DateTime.Now}\"");
     }
 }
 
 internal class Arguments
 {
+    private const int EXPECTED_NUMBER_OF_ARGUMENTS = 5;
+
     public string? JiraUrl { get; set; }
     public string? JiraUserName { get; set; }
     public string? JiraToken { get; set; }
@@ -35,11 +42,14 @@ internal class Arguments
 
     public static Arguments Parse(string[] args)
     {
-        var arguments = new Arguments();
+        var totalArguments = args.Length;
 
-        for (int i = 0; i < args.Length; i += 2)
+        CheckNumberOfArguments(totalArguments);
+
+        var arguments = new Arguments();
+        for (int i = 0; i < EXPECTED_NUMBER_OF_ARGUMENTS*2; i += 2)
         {
-            string argumentName = args[i].TrimStart('-');
+            string argumentName = args[i].ToLower().TrimStart('-');
             string argumentValue = args[i + 1];
 
             switch (argumentName)
@@ -53,14 +63,14 @@ internal class Arguments
                     arguments.JiraUserName = argumentValue;
                     break;
                 case "jiratoken":
-                case "k":
+                case "t":
                     arguments.JiraToken = argumentValue;
                     break;
                 case "sqlserverconnectionstring":
                 case "s":
                     arguments.SqlServerConnectionString = argumentValue;
                     break;
-                case "dateforincrementalupdate":
+                case "datetime":
                 case "d":
                     arguments.DateForIncrementalUpdate = DateTime.Parse(argumentValue);
                     break;
@@ -71,9 +81,16 @@ internal class Arguments
         }
 
         CheckAllArgumentsAreProvided(arguments);
-
         return arguments;
     }
+
+    private static void CheckNumberOfArguments(int totalArguments)
+    {
+        if (totalArguments < EXPECTED_NUMBER_OF_ARGUMENTS)
+            throw new ArgumentException("Arguments missing");
+    }
+
+    private static bool IsJiraUrl(string argumentName) => argumentName == "jiraurl" || argumentName == "j";
 
     private static void CheckAllArgumentsAreProvided(Arguments arguments)
     {
