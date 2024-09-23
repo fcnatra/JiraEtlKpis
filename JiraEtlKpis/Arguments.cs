@@ -14,22 +14,25 @@ internal class Arguments
         
         CheckNumberOfArguments(totalArguments);
 
+        Arguments arguments = Assign(args);
+
+        CheckAllArgumentsAreProvided(arguments);
+
+        return arguments;
+    }
+
+    private static Arguments Assign(string[] args)
+    {
         var arguments = new Arguments();
         for (int i = 0; i < EXPECTED_NUMBER_OF_ARGUMENTS; i += 2)
         {
             (string argumentName, string argumentValue) = ExtractArgumentPair(args, i);
 
-            arguments.Assign(argumentName, argumentValue);
+            if (Assignment.TryGetValue(argumentName, out var assign)) assign(arguments, argumentValue);
+            else throw new ArgumentException($"Invalid argument: {argumentName}");
         }
 
-        CheckAllArgumentsAreProvided(arguments);
         return arguments;
-    }
-
-    private void Assign(string argumentName, string argumentValue)
-    {
-        if (Assignment.TryGetValue(argumentName, out var assign)) assign(this, argumentValue);
-        else throw new ArgumentException($"Invalid argument: {argumentName}");
 
         // switch (argumentName)
         // {
