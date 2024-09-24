@@ -8,17 +8,14 @@ internal class Program
     
     private static void Main(string[] args)
     {
-        AddTraceListenerForLogging();
-        Trace.Listeners.Add(new ConsoleTraceListener());
+        AddTraceListeners();
 
         try
         {
             var arguments = Arguments.Parse(args);
 
             log.Info($"{arguments.DateForIncrementalUpdate}");
-
-            var etlProcess = new EtlProcess();
-            etlProcess.RunWith(arguments);
+            EtlProcess.RunWith(arguments);
         }
         catch (ArgumentException argEx)
         {
@@ -27,7 +24,14 @@ internal class Program
         }
     }
 
-    private static void AddTraceListenerForLogging()
+    private static void AddTraceListeners()
+    {
+        AddLog4NetListener();
+
+        Trace.Listeners.Add(new ConsoleTraceListener());
+    }
+
+    private static void AddLog4NetListener()
     {
         XmlConfigurator.Configure();
         TextWriterTraceListener log4netListener = new TextWriterTraceListener(new Log4NetWriter());
