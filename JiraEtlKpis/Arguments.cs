@@ -12,11 +12,10 @@ internal class Arguments
 
     internal static Arguments Parse(string[] args)
     {
-        var totalArguments = args.Length;
-        
-        CheckNumberOfArguments(totalArguments);
+        CheckNumberOfArguments(args.Length);
 
-        var arguments = new Arguments().Assign(args);
+        Arguments arguments = new();
+        arguments.Assign(args);
 
         CheckAllArgumentsAreProvided(arguments);
 

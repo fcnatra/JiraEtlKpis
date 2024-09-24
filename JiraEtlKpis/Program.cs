@@ -1,6 +1,4 @@
-﻿using System.Buffers;
-
-internal class Program
+﻿internal class Program
 {
     private static void Main(string[] args)
     {
