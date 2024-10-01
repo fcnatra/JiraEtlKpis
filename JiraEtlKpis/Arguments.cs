@@ -1,12 +1,12 @@
 using System.Data.SqlClient;
+using Interfaces;
 
-public class Arguments
+public class Arguments : IJiraArguments
 {
-    private const int EXPECTED_NUMBER_OF_ARGUMENTS = 5;
+    private const int EXPECTED_NUMBER_OF_ARGUMENTS = 4;
 
-    public string? JiraUrl { get; set; }
-    public string? JiraUserName { get; set; }
-    public string? JiraToken { get; set; }
+    public string? Url { get; set; }
+    public string? Token { get; set; }
     public string? SqlServerConnectionString { get; set; }
     public DateTime DateForIncrementalUpdate { get; set; }
 
@@ -24,11 +24,10 @@ public class Arguments
 
     private Arguments Assign(string[] args)
     {
-        JiraUrl = args[0];
-        JiraUserName = args[1];
-        JiraToken = args[2];
-        SqlServerConnectionString = args[3];
-        if (DateTime.TryParse(args[4], out var datetimeArg))
+        Url = args[0];
+        Token = args[1];
+        SqlServerConnectionString = args[2];
+        if (DateTime.TryParse(args[3], out var datetimeArg))
             DateForIncrementalUpdate = datetimeArg;
 
         return this;
@@ -45,10 +44,7 @@ public class Arguments
         if (!IsValidUrl())
             throw new ArgumentException("Jira Url is not valid");
 
-        if (string.IsNullOrEmpty(JiraUserName))
-            throw new ArgumentException("Jira UserName is not valid.");
-
-        if (string.IsNullOrEmpty(JiraToken))
+        if (string.IsNullOrEmpty(Token))
             throw new ArgumentException("Jira Token is not valid.");
 
         if (!IsValidSqlConnectionString())
@@ -71,19 +67,18 @@ public class Arguments
         { return false; }
     }
 
-    private bool IsValidUrl() =>  !string.IsNullOrEmpty(JiraUrl) &&  Uri.TryCreate(JiraUrl, UriKind.Absolute, out _);
+    private bool IsValidUrl() =>  !string.IsNullOrEmpty(Url) &&  Uri.TryCreate(Url, UriKind.Absolute, out _);
 
     internal static void ShowHelp()
     {
-        Console.WriteLine("\nUsage: JiraEtlKpis.exe <Jira Url> <Jira UserName> <Jira Token> <SqlServer Connection String> <DateTime>\n");
+        Console.WriteLine("\nUsage: JiraEtlKpis.exe <Jira Url> <Jira Token> <SqlServer Connection String> <DateTime>\n");
         Console.WriteLine("Options:");
         Console.WriteLine("\tJira Url: The URL of the Jira instance.");
-        Console.WriteLine("\tJira UserName: The username for authenticating with Jira.");
         Console.WriteLine("\tJira Token: The API token or password for authenticating with Jira.");
         Console.WriteLine("\tSqlServer ConnectionString: The connection string for the SQL Server database.");
         Console.WriteLine("\tDateTime: The date AND THE TIME for performing incremental updates in the ETL process.");
         Console.WriteLine($"\t\tFormat: {DateTime.Now}");
         Console.WriteLine("\nExample:");
-        Console.WriteLine($"\tJiraEtlKpis.exe https://my.atlassian.com usr tkn \"Server=myServerAddress;Database=myDataBase;Trusted_Connection=True\" \"{DateTime.Now}\"");
+        Console.WriteLine($"\tJiraEtlKpis.exe https://my.atlassian.com tkn \"Server=myServerAddress;Database=myDataBase;Trusted_Connection=True\" \"{DateTime.Now}\"");
     }
 }

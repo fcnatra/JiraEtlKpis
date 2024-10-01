@@ -1,6 +1,8 @@
 using System.Text;
 using log4net;
 
+namespace Services;
+
 public class Log4NetWriter : System.IO.TextWriter
 {
     private readonly ILog log;

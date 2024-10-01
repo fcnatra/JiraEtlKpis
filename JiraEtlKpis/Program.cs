@@ -2,6 +2,7 @@
 using ETL;
 using log4net;
 using log4net.Config;
+using Services;
 
 internal class Program
 {
@@ -14,7 +15,15 @@ internal class Program
         try
         {
             var arguments = Arguments.Parse(args);
-            EtlProcess.RunWith(arguments);
+            EtlProcess etl = new()
+            {
+                ExecutionArguments = arguments,
+                JiraConnector = new JiraApiConnector
+                {
+                    JiraArguments = arguments
+                }
+            };
+            etl.Run();
         }
         catch (ArgumentException argEx)
         {
