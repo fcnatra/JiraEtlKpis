@@ -84,6 +84,6 @@ internal class Arguments
         Console.WriteLine("\tDateTime: The date AND THE TIME for performing incremental updates in the ETL process.");
         Console.WriteLine($"\t\tFormat: {DateTime.Now}");
         Console.WriteLine("\nExample:");
-        Console.WriteLine($"\tJiraEtlKpis.exe https://my.atlassian.com usr tnk \"Server=myServerAddress;Database=myDataBase;Trusted_Connection=True\" \"{DateTime.Now}\"");
+        Console.WriteLine($"\tJiraEtlKpis.exe https://my.atlassian.com usr tkn \"Server=myServerAddress;Database=myDataBase;Trusted_Connection=True\" \"{DateTime.Now}\"");
     }
 }

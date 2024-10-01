@@ -8,13 +8,13 @@ internal class Program
     
     private static void Main(string[] args)
     {
-        AddTraceListeners();
+        SetupLogging();
 
         try
         {
             var arguments = Arguments.Parse(args);
 
-            log.Info($"{arguments.DateForIncrementalUpdate}");
+            log.Info($"{arguments.DateForIncrementalUpdate} Starting ETL process");
             EtlProcess.RunWith(arguments);
         }
         catch (ArgumentException argEx)
@@ -24,10 +24,11 @@ internal class Program
         }
     }
 
-    private static void AddTraceListeners()
+    private static void SetupLogging()
     {
         AddLog4NetListener();
 
+        // add console listener for debugging
         Trace.Listeners.Add(new ConsoleTraceListener());
     }
 

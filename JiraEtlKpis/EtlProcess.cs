@@ -13,6 +13,10 @@ internal class EtlProcess
     internal void Run()
     {
         if (this.ExecutionArguments is null) throw new ArgumentException($"Arguments not provided");
+        
+        log.Info($"Starting ETL process with args: \"{ExecutionArguments.JiraUrl}\" \"{ExecutionArguments.JiraUserName}\" \"TOKEN_HIDDEN_FOR_PRIVACY\" \"{ExecutionArguments.DateForIncrementalUpdate}\"");
+
+        
     }
 
     internal static void RunWith(Arguments arguments)
