@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using ETL;
 using log4net;
 using log4net.Config;
 
@@ -13,15 +14,15 @@ internal class Program
         try
         {
             var arguments = Arguments.Parse(args);
-
-            log.Info($"{arguments.DateForIncrementalUpdate} Starting ETL process");
             EtlProcess.RunWith(arguments);
         }
         catch (ArgumentException argEx)
         {
             log.Error($"\nERROR: {argEx.Message}");
+            Console.WriteLine($"\nExecution error: {argEx.Message}\nCheck logs for more info.");
             Arguments.ShowHelp();
         }
+        Console.WriteLine($"END.");
     }
 
     private static void SetupLogging()
