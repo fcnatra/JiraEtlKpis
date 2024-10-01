@@ -1,7 +1,5 @@
-namespace ETL.Interfaces
+namespace ETL.Interfaces;
+public interface IJiraConnector
 {
-    public interface IJiraConnector
-    {
-        int BlockSize { get; set; }
-    }
+    int BlockSize { get; set; }
 }

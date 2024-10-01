@@ -1,6 +1,6 @@
 using System.Data.SqlClient;
 
-internal class Arguments
+public class Arguments
 {
     private const int EXPECTED_NUMBER_OF_ARGUMENTS = 5;
 
@@ -17,7 +17,7 @@ internal class Arguments
         Arguments arguments = new();
         arguments.Assign(args);
 
-        CheckAllArgumentsAreProvided(arguments);
+        arguments.Check();
 
         return arguments;
     }
@@ -40,38 +40,38 @@ internal class Arguments
             throw new ArgumentException("Arguments missing");
     }
 
-    private static void CheckAllArgumentsAreProvided(Arguments arguments)
+    public void Check()
     {
-        if (!IsValidUrl(arguments))
+        if (!IsValidUrl())
             throw new ArgumentException("Jira Url is not valid");
 
-        if (string.IsNullOrEmpty(arguments.JiraUserName))
+        if (string.IsNullOrEmpty(JiraUserName))
             throw new ArgumentException("Jira UserName is not valid.");
 
-        if (string.IsNullOrEmpty(arguments.JiraToken))
+        if (string.IsNullOrEmpty(JiraToken))
             throw new ArgumentException("Jira Token is not valid.");
 
-        if (!IsValidSqlConnectionString(arguments))
+        if (!IsValidSqlConnectionString())
             throw new ArgumentException("SqlServer ConnectionString is not valid.");
 
-        if (!IsValidDateTime(arguments))
+        if (!IsValidDateTime())
             throw new ArgumentException("Date For Incremental Update is not valid.");
     }
 
-    private static bool IsValidDateTime(Arguments arguments) => arguments.DateForIncrementalUpdate != default;
+    private bool IsValidDateTime() => DateForIncrementalUpdate != default;
 
-    private static bool IsValidSqlConnectionString(Arguments arguments)
+    private bool IsValidSqlConnectionString()
     {
         try
         {
-            new SqlConnectionStringBuilder(arguments.SqlServerConnectionString);
+            new SqlConnectionStringBuilder(SqlServerConnectionString);
             return true;
         }
         catch (ArgumentException)
         { return false; }
     }
 
-    private static bool IsValidUrl(Arguments arguments) =>  !string.IsNullOrEmpty(arguments.JiraUrl) &&  Uri.TryCreate(arguments.JiraUrl, UriKind.Absolute, out _);
+    private bool IsValidUrl() =>  !string.IsNullOrEmpty(JiraUrl) &&  Uri.TryCreate(JiraUrl, UriKind.Absolute, out _);
 
     internal static void ShowHelp()
     {
