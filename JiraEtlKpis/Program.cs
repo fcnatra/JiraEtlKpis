@@ -10,17 +10,15 @@ internal class Program
     
     private static void Main(string[] args)
     {
-        SetupLogging();
+        SetupLogStrategy();
 
         try
         {
             var arguments = Arguments.Parse(args);
-            EtlProcess etl = new(arguments)
+            var etl = new EtlProcess
             {
-                JiraConnector = new JiraApiConnector
-                {
-                    JiraArguments = arguments
-                }
+                ExecutionArguments = arguments,
+                JiraConnector = new JiraApiConnector()
             };
             etl.Run();
         }
@@ -33,15 +31,15 @@ internal class Program
         Console.WriteLine($"END.");
     }
 
-    private static void SetupLogging()
+    private static void SetupLogStrategy()
     {
-        AddLog4NetListener();
+        AddLog4NetTraceListener();
 
         // add console listener for debugging
         Trace.Listeners.Add(new ConsoleTraceListener());
     }
 
-    private static void AddLog4NetListener()
+    private static void AddLog4NetTraceListener()
     {
         XmlConfigurator.Configure();
         TextWriterTraceListener log4netListener = new TextWriterTraceListener(new Log4NetWriter());
