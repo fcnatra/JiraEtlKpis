@@ -10,8 +10,7 @@ public class EtlProcessTests
     public void WhenJiraConnectorMissing_ExceptionThrown()
     {
         // Arrange
-        var etlProcess = new EtlProcess();
-        etlProcess.ExecutionArguments = new Arguments();
+        var etlProcess = new EtlProcess(new Arguments());
 
         // Act & Assert
         Assert.Throws<InvalidOperationException>(() => etlProcess.Run());    
@@ -22,13 +21,23 @@ public class EtlProcessTests
     {
         var fakeJiraConnector = A.Fake<IJiraConnector>();
         // Arrange
-        var etlProcess = new EtlProcess()
+        var etlProcess = new EtlProcess(new Arguments())
         {
-            ExecutionArguments = new Arguments(),
             JiraConnector = fakeJiraConnector
         };
 
         var exception = Record.Exception(() => etlProcess.Run());
         Assert.Null(exception);
+    }
+
+    [Fact]
+    public void WhenArgumentsAreMissing_ExceptionThrown()
+    {
+        // Arrange
+        var etlProcess = new EtlProcess(null);
+        etlProcess.JiraConnector = A.Fake<IJiraConnector>();
+
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() => etlProcess.Run());
     }
 }

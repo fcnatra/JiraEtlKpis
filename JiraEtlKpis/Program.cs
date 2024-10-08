@@ -15,9 +15,8 @@ internal class Program
         try
         {
             var arguments = Arguments.Parse(args);
-            EtlProcess etl = new()
+            EtlProcess etl = new(arguments)
             {
-                ExecutionArguments = arguments,
                 JiraConnector = new JiraApiConnector
                 {
                     JiraArguments = arguments

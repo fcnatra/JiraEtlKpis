@@ -1,23 +1,24 @@
 using ETL.Interfaces;
 using log4net;
+using System.Diagnostics;
 
 namespace ETL;
 
 public class EtlProcess
 {
-    public Arguments ExecutionArguments { get; set; } = new();
+    public Arguments ExecutionArguments { get; set; }
     public IJiraConnector? JiraConnector { get; set; }
 
     private static readonly ILog log = LogManager.GetLogger(typeof(Program));
     
-    public EtlProcess()
+    public EtlProcess(Arguments arguments)
     {
+        ExecutionArguments = arguments;
     }
 
     public static void RunWith(Arguments arguments)
     {
-        EtlProcess etl = new();
-        etl.ExecutionArguments = arguments;
+        EtlProcess etl = new(arguments);
         etl.Run();
     }
 
@@ -47,6 +48,6 @@ public class EtlProcess
     {
         if (JiraConnector is null) return;
         
-        System.Diagnostics.Debug.WriteLine(JiraConnector.GetIssuesSince(ExecutionArguments.DateForIncrementalUpdate));
+        Debug.WriteLine(JiraConnector.GetIssuesSince(ExecutionArguments.DateForIncrementalUpdate));
     }
 }
